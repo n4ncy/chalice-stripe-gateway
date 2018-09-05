@@ -1,6 +1,7 @@
 from chalice import Chalice
 import stripe
 import os
+import jwt
 
 app = Chalice(app_name='PaymentGateway')
 
@@ -12,7 +13,7 @@ def index():
 def chargeUser():
     stripe.api_key = os.environ.get('STRIPE_TOKEN')
 
-    json = app.current_request.json_body
+    json = jwt.decode(json.load(app.current_request.raw_body), os.environ.get('JWT_SECRET'), algorithms=['HS256'])
     decodeAmount = json['amount']
     decodeToken = json['token']
 
